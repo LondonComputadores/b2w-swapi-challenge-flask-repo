@@ -1,0 +1,10 @@
+aniso8601==8.0.0
+click==7.1.2
+flask-restful==0.3.8
+flask==1.1.2
+itsdangerous==1.1.0
+jinja2==2.11.2
+markupsafe==1.1.1
+pytz==2020.1
+six==1.15.0
+werkzeug==1.0.1

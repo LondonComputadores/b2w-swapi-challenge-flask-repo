@@ -1,0 +1,107 @@
+from flask import Flask, request, Response
+from flask_restful import Resource, Api
+from flask_mongoengine import MongoEngine
+from database.db import initialize_db
+from database.model import Planetas
+import json
+
+
+app = Flask(__name__)
+app.config.from_pyfile('app.cfg')
+db = MongoEngine(app)
+
+app = Flask(__name__)
+api = Api(app)
+
+planetas = [
+    {
+     'id': '0',
+     'name': 'Flask',
+     'clima' : 'Cold',
+     'terreno': 'Prog'   
+    },
+    {
+     'id': '1',
+     'name': 'Django',
+     'clima' : 'Windy',
+     'terreno': 'Infra'  
+    },
+    {
+     'id': '2',
+     'name': 'Go',
+     'clima' : 'Rainy',
+     'terreno': 'Dev'  
+    }
+]
+
+class Planeta(Resource):
+    def get(self, name):
+        #Lista planetas pelo name caso não encontrado retorna mensagem de erro
+        planeta = Planetas
+        try:
+            response = {
+                'id':planeta.id,
+                'name':planeta.name,
+                'clima':planeta.clima,
+                'terreno':planeta.terreno
+            }
+
+        except AttributeError:
+            response = {'status': 'error', 'message': 'Not Found!'}
+        return response 
+
+def put(self, name):
+    #Altera dados do planeta
+    planeta = Users.query.filter_by(name=name).filter()
+    data = request.json
+    if 'name' in data:
+      planeta.name = data['name']
+    planeta.save()
+    response = {
+      'id': planeta.id,
+      'name': planeta.name,
+      'clima': planeta.clima, 
+      'terreno':planeta.terreno
+    }
+    return response
+
+def delete(self, name):
+    #Exclui um planeta e retorna messagem de confirmação
+    planeta = Planetas.query.filter_by(name=name).filter()
+    message = 'Planeta {} deleted succesfully'.format(planeta.name)
+    planeta.delete()
+    return {'status':'sucess', 'message': message}
+
+class ListarPlanetas(Resource):
+    def get(self, name):
+        #Lista todos os planetas
+        planetas = Planetas.all()
+        response = [{
+            'id':i.id,
+            'name':i.name,
+            'clima':i.clima,
+            'terreno':i.terreno} for i in planetas]
+        return response 
+
+    def post(self):
+        #Cria um novo usuário
+        data = request.json
+        planeta = Planetas(name=data['name'],
+                    clima=data['clima'],
+                    terreno=data['terreno'])
+        planeta.save
+        response = {
+        'id': planeta.id,
+        'name': planeta.name,
+        'clima': planeta.clima, 
+        'terreno': planeta.terreno
+        }
+        return response
+
+
+api.add_resource(Planeta, '/planeta/<int:id>/')
+api.add_resource(ListarPlanetas, '/planetas/')
+
+
+if __name__ == '__main__':
+    app.run(debug=True)
