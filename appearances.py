@@ -6,7 +6,7 @@ import swapi
 
 class SWAPI:
     def planets_appearances(self, planet):
-        resp = requests.get(f'https://swapi.dev/api/about/')
+        resp = requests.get(f'https://swapi.dev/api/about/') #or .../api/planets
         return json.loads(resp.content)
 
 class Appears(Resource):

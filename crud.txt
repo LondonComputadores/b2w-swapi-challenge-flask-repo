@@ -86,10 +86,11 @@ class ListarPlanetas(Resource):
     def post(self):
         #Cria um novo usuário
         data = request.json
+        planeta = Planetas.query.filter_by(name=data['planeta']).first()
         planeta = Planetas(name=data['name'],
                     clima=data['clima'],
                     terreno=data['terreno'])
-        planeta.save
+        planeta.save()
         response = {
         'id': planeta.id,
         'name': planeta.name,

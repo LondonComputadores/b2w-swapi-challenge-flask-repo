@@ -1,4 +1,4 @@
-from flask import Flask, request, Response, jsonify
+from flask import Flask, request, Response
 from flask_restful import Resource, Api
 from flask_mongoengine import MongoEngine
 from database.db import initialize_db
@@ -8,10 +8,12 @@ import json
 
 
 app = Flask(__name__)
-app.config.from_pyfile('app.cfg')
-db = MongoEngine(app)
+app.config['MONGODB_SETTINGS'] = {
+ 'host': 'mongodb://localhost:27017/b2w-swapi-challenge-flask-repo'
+}
 
-app = Flask(__name__)
+initialize_db(app)
+
 api = Api(app)
 
 planets = [
@@ -72,12 +74,27 @@ class ListPlanets(Resource):
     def get(self):        
         return planets 
 
-    def post(self, id):
+    def post(self):
         #Create a new planet
-        data = request.get_json()
-        planet = Planets(**data).save()
-        id = planet.id
-        return {'id': str(id)}, 200
+        data = request.json
+        planet = Planets.query.filter_by(name=data['planet']).first()
+        planet = Planets(id=data['id'],
+                         name=data['name'],
+                         climate=data['climate'],
+                         terrain=data['terrain'])
+        planet.save()
+        response = {
+        'id': planet.id,
+        'name': planet.name,
+        'climate': planet.climate, 
+        'terrain': planet.terrain
+        }
+        return response
+
+        # data = request.get_json()
+        # planet = Planets(**data).save()
+        # id = planet.id
+        # return {'id': str(id)}, 200
 
 class PlanetByName(Resource):
     def get(self, name):
@@ -99,4 +116,4 @@ api.add_resource(PlanetByName, '/planets/<string:name>/')
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=5001, host='0.0.0.0')

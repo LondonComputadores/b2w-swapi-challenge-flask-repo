@@ -5,4 +5,7 @@ class Planets(db.Document):
     name = db.StringField(required=True, unique=True)
     climate = db.ListField(db.StringField(), required=True)
     terreain = db.ListField(db.StringField(), required=True)
-    appearances = db.IntField(default=0)
+    
+
+
+#appearances = db.IntField(default=0)
